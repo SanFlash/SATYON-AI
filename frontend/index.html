@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATYON-AI | Multi-Source AI Search Aggregator</title>
+    <meta name="description" content="SATYON-AI - One Search, One Answer, Multiple Sources. AI-powered search aggregation across Google, GitHub, StackOverflow, Wikipedia, ArXiv, Kaggle, and YouTube.">
+    <meta name="keywords" content="AI search, search aggregator, multi-source search, SATYON-AI">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#f0f4ff', 100: '#dbe4ff', 200: '#bac8ff', 300: '#91a7ff', 400: '#748ffc', 500: '#5c7cfa', 600: '#4c6ef5', 700: '#4263eb', 800: '#3b5bdb', 900: '#364fc7' },
+                        accent: { 50: '#fff0f6', 100: '#ffdeeb', 200: '#fcc2d7', 300: '#faa2c1', 400: '#f783ac', 500: '#f06595', 600: '#e64980', 700: '#d6336c', 800: '#c2255c', 900: '#a61e4d' },
+                        dark: { 50: '#c1c2c5', 100: '#a6a7ab', 200: '#909296', 300: '#5c5f66', 400: '#373a40', 500: '#2c2e33', 600: '#25262b', 700: '#1a1b1e', 800: '#141517', 900: '#101113' },
+                        neon: { cyan: '#00fff5', purple: '#a855f7', pink: '#ec4899', blue: '#3b82f6', green: '#10b981' }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-dark-900 text-white font-sans min-h-screen overflow-x-hidden">
+
+    <!-- Animated Background -->
+    <div id="bg-canvas" class="fixed inset-0 z-0 pointer-events-none">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="relative z-10 flex flex-col min-h-screen">
+
+        <!-- Navigation -->
+        <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo -->
+                    <a href="/" id="logo" class="flex items-center gap-3 group">
+                        <div class="logo-icon w-10 h-10 relative">
+                            <div class="absolute inset-0 bg-gradient-to-br from-neon-cyan via-primary-500 to-neon-purple rounded-xl rotate-0 group-hover:rotate-180 transition-transform duration-700"></div>
+                            <div class="absolute inset-[2px] bg-dark-800 rounded-[10px] flex items-center justify-center">
+                                <span class="text-lg font-black bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">S</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-lg font-bold font-display tracking-tight bg-gradient-to-r from-white to-dark-100 bg-clip-text text-transparent">SATYON</span>
+                            <span class="text-[10px] font-medium text-primary-400 tracking-[0.25em] -mt-1">AI SEARCH</span>
+                        </div>
+                    </a>
+
+                    <!-- Nav Actions -->
+                    <div class="flex items-center gap-4">
+                        <button id="btn-dev-mode" class="nav-chip group" title="Developer Mode">
+                            <span class="text-sm">⚡</span>
+                            <span class="hidden sm:inline text-xs font-medium">Dev Mode</span>
+                        </button>
+                        <button id="btn-research-mode" class="nav-chip group" title="Research Mode">
+                            <span class="text-sm">🔬</span>
+                            <span class="hidden sm:inline text-xs font-medium">Research</span>
+                        </button>
+                        <button id="btn-settings" class="w-9 h-9 rounded-xl bg-dark-600/50 border border-dark-400/30 flex items-center justify-center hover:border-primary-500/50 transition-all">
+                            <svg class="w-4 h-4 text-dark-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section (Home State) -->
+        <section id="hero-section" class="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-10 transition-all duration-700">
+            <!-- Animated Title -->
+            <div id="hero-title" class="text-center mb-8">
+                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-display leading-none mb-4">
+                    <span class="bg-gradient-to-r from-neon-cyan via-primary-400 to-neon-purple bg-clip-text text-transparent">SATYON</span>
+                    <span class="text-dark-200">-</span>
+                    <span class="bg-gradient-to-r from-neon-purple via-accent-500 to-neon-pink bg-clip-text text-transparent">AI</span>
+                </h1>
+                <p class="text-lg sm:text-xl text-dark-100 font-light max-w-2xl mx-auto leading-relaxed">
+                    <span class="text-white font-semibold">One Search.</span>
+                    <span class="text-white font-semibold">One Answer.</span>
+                    <span class="bg-gradient-to-r from-neon-cyan to-primary-400 bg-clip-text text-transparent font-semibold">Multiple Sources.</span>
+                </p>
+            </div>
+
+            <!-- Search Container -->
+            <div id="search-container" class="w-full max-w-3xl mx-auto mb-8">
+                <div class="search-box-wrapper group">
+                    <div class="search-glow"></div>
+                    <div class="search-box">
+                        <div class="flex items-center gap-3 px-5 py-4">
+                            <div class="search-icon-wrapper">
+                                <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                            <input
+                                id="search-input"
+                                type="text"
+                                placeholder="Ask anything... Search across all sources at once"
+                                class="flex-1 bg-transparent text-white text-base sm:text-lg placeholder-dark-200 outline-none font-light"
+                                autocomplete="off"
+                                spellcheck="false"
+                            >
+                            <div id="search-loading" class="hidden">
+                                <div class="search-spinner"></div>
+                            </div>
+                            <button id="search-btn" class="search-submit-btn" type="button">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Search Suggestions -->
+                <div id="suggestions" class="flex flex-wrap justify-center gap-2 mt-5">
+                    <button class="suggestion-chip" data-query="Best machine learning datasets">📊 ML Datasets</button>
+                    <button class="suggestion-chip" data-query="How to build a REST API with Python">🐍 REST API Guide</button>
+                    <button class="suggestion-chip" data-query="React vs Vue comparison">⚛️ React vs Vue</button>
+                    <button class="suggestion-chip" data-query="Latest AI research papers 2024">📄 AI Research</button>
+                    <button class="suggestion-chip" data-query="JavaScript async await tutorial">💛 Async/Await</button>
+                    <button class="suggestion-chip" data-query="Natural language processing datasets">🧠 NLP Datasets</button>
+                </div>
+            </div>
+
+            <!-- Source Icons (Home State) -->
+            <div id="source-icons" class="flex flex-wrap justify-center gap-4 mt-4">
+                <div class="source-badge" data-source="google">
+                    <span class="text-xl">🔍</span>
+                    <span class="text-[11px] font-medium text-dark-100">Google</span>
+                </div>
+                <div class="source-badge" data-source="wikipedia">
+                    <span class="text-xl">📚</span>
+                    <span class="text-[11px] font-medium text-dark-100">Wikipedia</span>
+                </div>
+                <div class="source-badge" data-source="stackoverflow">
+                    <span class="text-xl">💬</span>
+                    <span class="text-[11px] font-medium text-dark-100">StackOverflow</span>
+                </div>
+                <div class="source-badge" data-source="github">
+                    <span class="text-xl">🐙</span>
+                    <span class="text-[11px] font-medium text-dark-100">GitHub</span>
+                </div>
+                <div class="source-badge" data-source="kaggle">
+                    <span class="text-xl">📊</span>
+                    <span class="text-[11px] font-medium text-dark-100">Kaggle</span>
+                </div>
+                <div class="source-badge" data-source="arxiv">
+                    <span class="text-xl">📄</span>
+                    <span class="text-[11px] font-medium text-dark-100">ArXiv</span>
+                </div>
+                <div class="source-badge" data-source="youtube">
+                    <span class="text-xl">🎥</span>
+                    <span class="text-[11px] font-medium text-dark-100">YouTube</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section (Hidden Initially) -->
+        <section id="results-section" class="hidden flex-1 pt-20 pb-10 px-4">
+            <div class="max-w-6xl mx-auto">
+
+                <!-- Results Header -->
+                <div id="results-header" class="mb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h2 id="results-query-title" class="text-xl sm:text-2xl font-bold text-white"></h2>
+                            <div class="flex items-center gap-3 mt-1">
+                                <span id="results-count" class="text-sm text-dark-100"></span>
+                                <span id="results-time" class="text-sm text-dark-200"></span>
+                                <span id="results-category" class="category-badge"></span>
+                            </div>
+                        </div>
+                        <button id="btn-new-search" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-dark-600/50 border border-dark-400/30 text-sm text-dark-100 hover:text-white hover:border-primary-500/50 transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            New Search
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Source Tabs -->
+                <div id="source-tabs" class="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-hide">
+                    <button class="source-tab active" data-tab="all">
+                        <span>✨</span> All Results
+                    </button>
+                    <button class="source-tab" data-tab="ai-summary">
+                        <span>🤖</span> AI Summary
+                    </button>
+                    <button class="source-tab" data-tab="google">
+                        <span>🔍</span> Google
+                    </button>
+                    <button class="source-tab" data-tab="wikipedia">
+                        <span>📚</span> Wikipedia
+                    </button>
+                    <button class="source-tab" data-tab="stackoverflow">
+                        <span>💬</span> StackOverflow
+                    </button>
+                    <button class="source-tab" data-tab="github">
+                        <span>🐙</span> GitHub
+                    </button>
+                    <button class="source-tab" data-tab="kaggle">
+                        <span>📊</span> Kaggle
+                    </button>
+                    <button class="source-tab" data-tab="arxiv">
+                        <span>📄</span> ArXiv
+                    </button>
+                    <button class="source-tab" data-tab="youtube">
+                        <span>🎥</span> YouTube
+                    </button>
+                </div>
+
+                <!-- Results Content Area -->
+                <div id="results-content" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                    <!-- AI Summary Panel (Left / Top on mobile) -->
+                    <div id="ai-summary-panel" class="lg:col-span-1 order-1">
+                        <div class="ai-summary-card">
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-purple to-neon-pink flex items-center justify-center">
+                                    <span class="text-sm">🤖</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">AI Summary</h3>
+                                    <span id="ai-confidence" class="text-[10px] text-dark-200">Powered by SATYON-AI</span>
+                                </div>
+                            </div>
+                            <div id="ai-summary-content" class="text-sm text-dark-50 leading-relaxed prose prose-invert prose-sm max-w-none">
+                                <!-- AI summary will be rendered here -->
+                            </div>
+
+                            <!-- AI Reasoning Tree -->
+                            <div id="ai-reasoning-section" class="mt-6 pt-5 border-t border-dark-400/30 hidden">
+                                <h4 class="text-xs font-bold text-neon-cyan uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-neon-cyan animate-pulse"></span>
+                                    AI Reasoning Tree
+                                </h4>
+                                <div id="ai-reasoning-tree" class="relative pl-4 space-y-4">
+                                    <div class="absolute left-[7px] top-1 bottom-3 w-px bg-gradient-to-b from-neon-cyan/50 via-primary-500/30 to-transparent"></div>
+                                    <!-- Steps rendered here -->
+                                </div>
+                            </div>
+
+                            <!-- Key Insights -->
+                            <div id="ai-insights-section" class="mt-5 pt-4 border-t border-dark-400/30 hidden">
+                                <h4 class="text-xs font-bold text-primary-400 uppercase tracking-wider mb-3">💡 Key Insights</h4>
+                                <ul id="ai-insights-list" class="space-y-2">
+                                    <!-- Insights rendered here -->
+                                </ul>
+                            </div>
+
+                            <!-- Recommendations -->
+                            <div id="ai-recommendations-section" class="mt-4 pt-4 border-t border-dark-400/30 hidden">
+                                <h4 class="text-xs font-bold text-neon-green uppercase tracking-wider mb-3">🎯 Recommendations</h4>
+                                <ul id="ai-recommendations-list" class="space-y-2">
+                                    <!-- Recommendations rendered here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Results (Right / Bottom on mobile) -->
+                    <div id="results-list-container" class="lg:col-span-2 order-2">
+                        <div id="results-list" class="space-y-3">
+                            <!-- Result cards will be rendered here -->
+                        </div>
+
+                        <!-- Load More -->
+                        <div id="load-more-container" class="hidden mt-6 text-center">
+                            <button id="btn-load-more" class="px-6 py-3 rounded-xl bg-dark-600/50 border border-dark-400/30 text-sm text-dark-100 hover:text-white hover:border-primary-500/50 transition-all">
+                                Load More Results
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="hidden fixed inset-0 z-40 bg-dark-900/80 backdrop-blur-sm flex items-center justify-center">
+            <div class="text-center">
+                <div class="loading-brain mb-6">
+                    <div class="brain-pulse"></div>
+                    <span class="text-4xl relative z-10">🧠</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">Searching Across Sources</h3>
+                <p id="loading-status" class="text-sm text-dark-100">Querying Google, GitHub, Wikipedia...</p>
+                <div class="loading-bar mt-4">
+                    <div class="loading-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-dark-900/90 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="settings-panel w-full max-w-lg">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-white">⚙️ Settings</h2>
+                    <button id="btn-close-settings" class="w-8 h-8 rounded-lg bg-dark-500/50 flex items-center justify-center hover:bg-dark-400/50 transition-all">
+                        <svg class="w-4 h-4 text-dark-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- API Configuration -->
+                    <div>
+                        <h3 class="text-sm font-bold text-primary-400 uppercase tracking-wider mb-3">API Keys</h3>
+                        <p class="text-xs text-dark-200 mb-4">Configure API keys for enhanced results. Without keys, demo results are shown.</p>
+
+                        <div class="space-y-3">
+                            <div class="setting-input-group">
+                                <label class="text-xs font-medium text-dark-100">OpenAI API Key</label>
+                                <input type="password" id="setting-openai-key" class="setting-input" placeholder="sk-...">
+                            </div>
+                            <div class="setting-input-group">
+                                <label class="text-xs font-medium text-dark-100">SerpAPI Key</label>
+                                <input type="password" id="setting-serpapi-key" class="setting-input" placeholder="Your SerpAPI key">
+                            </div>
+                            <div class="setting-input-group">
+                                <label class="text-xs font-medium text-dark-100">GitHub Token</label>
+                                <input type="password" id="setting-github-token" class="setting-input" placeholder="ghp_...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backend URL -->
+                    <div>
+                        <h3 class="text-sm font-bold text-primary-400 uppercase tracking-wider mb-3">Backend</h3>
+                        <div class="setting-input-group">
+                            <label class="text-xs font-medium text-dark-100">API Base URL</label>
+                            <input type="text" id="setting-api-url" class="setting-input" placeholder="http://localhost:8000">
+                        </div>
+                    </div>
+
+                    <!-- Sources Toggle -->
+                    <div>
+                        <h3 class="text-sm font-bold text-primary-400 uppercase tracking-wider mb-3">Active Sources</h3>
+                        <div class="grid grid-cols-2 gap-2" id="source-toggles">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex gap-3">
+                    <button id="btn-save-settings" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-primary-600 to-primary-500 text-white text-sm font-semibold hover:shadow-lg hover:shadow-primary-500/25 transition-all">
+                        Save Settings
+                    </button>
+                    <button id="btn-reset-settings" class="px-4 py-2.5 rounded-xl bg-dark-500/50 text-dark-100 text-sm font-medium hover:text-white transition-all">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="relative z-10 text-center py-6 px-4">
+            <p class="text-xs text-dark-300">
+                Built with ❤️ by <span class="text-primary-400 font-semibold">SATYON-AI</span> · One Search, One Answer, Multiple Sources
+            </p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/animations.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>
