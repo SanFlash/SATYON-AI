@@ -753,3 +753,176 @@
     border-radius: 4px;
     color: #bac8ff;
 }
+/* ═══════════════════════════════════════════════
+   ANDROID MOBILE OPTIMIZATION
+   ═══════════════════════════════════════════════ */
+
+/* Base mobile improvements */
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* Flexible container */
+.container,
+.main-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 16px;
+}
+
+/* Responsive images */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Make all flex layouts mobile friendly */
+.flex {
+    flex-wrap: wrap;
+}
+
+/* Search box improvements */
+.search-box {
+    width: 100%;
+}
+
+.search-box input {
+    width: 100%;
+    font-size: 16px;
+}
+
+/* Navigation responsive */
+#navbar {
+    padding: 10px 14px;
+}
+
+.nav-chip {
+    font-size: 12px;
+    padding: 6px 10px;
+}
+
+/* Source tabs horizontal scroll */
+.source-tabs-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    gap: 8px;
+    padding-bottom: 6px;
+}
+
+/* Make cards responsive */
+.result-card {
+    width: 100%;
+}
+
+/* AI summary responsive */
+.ai-summary-card {
+    width: 100%;
+}
+
+/* Grid responsiveness */
+.results-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+/* Tablet view */
+@media (min-width: 768px) {
+
+    .results-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
+
+/* Desktop view */
+@media (min-width: 1024px) {
+
+    .results-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+}
+
+/* Smaller Android devices */
+@media (max-width: 420px) {
+
+    body {
+        font-size: 14px;
+    }
+
+    #hero-title h1 {
+        font-size: 1.8rem;
+    }
+
+    .search-submit-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .nav-chip {
+        font-size: 11px;
+    }
+
+}
+
+/* Touch friendly spacing */
+button,
+.nav-chip,
+.source-tab,
+.suggestion-chip {
+    min-height: 40px;
+}
+
+/* Prevent text overflow */
+.result-title,
+.result-snippet,
+.result-url {
+    word-break: break-word;
+}
+
+/* Improve scrolling performance on Android */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Mobile safe spacing */
+.section {
+    padding: 40px 16px;
+}
+
+/* Fix fixed elements on mobile */
+@media (max-width: 768px) {
+
+    .ai-summary-card {
+        position: relative;
+        top: auto;
+    }
+
+    #navbar {
+        backdrop-filter: blur(10px);
+    }
+
+}
+
+/* Improve suggestion chips scrolling */
+.suggestion-container {
+    overflow-x: auto;
+    display: flex;
+    gap: 10px;
+    padding-bottom: 8px;
+}
+
+/* Hide scrollbar but allow scroll */
+.suggestion-container::-webkit-scrollbar {
+    display: none;
+}
