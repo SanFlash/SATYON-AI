@@ -12,6 +12,7 @@ from api_clients.github_api import search_github
 from api_clients.kaggle_api import search_kaggle
 from api_clients.arxiv_api import search_arxiv
 from api_clients.youtube_api import search_youtube
+from api_clients.tavily_api import search_tavily
 
 
 # Source function mapping
@@ -23,6 +24,7 @@ SOURCE_FUNCTIONS = {
     "kaggle": search_kaggle,
     "arxiv": search_arxiv,
     "youtube": search_youtube,
+    "tavily": search_tavily,
 }
 
 
@@ -122,6 +124,7 @@ def _score_and_sort(results: list, query: str) -> list:
             "arxiv": 1,
             "kaggle": 1,
             "youtube": 1,
+            "tavily": 2,
         }
         score += source_priority.get(result.get("source", ""), 0)
         
@@ -150,4 +153,5 @@ def get_available_sources() -> list:
         {"id": "kaggle", "name": "Kaggle", "icon": "📊", "description": "Datasets & notebooks"},
         {"id": "arxiv", "name": "ArXiv", "icon": "📄", "description": "Research papers"},
         {"id": "youtube", "name": "YouTube", "icon": "🎥", "description": "Video tutorials"},
+        {"id": "tavily", "name": "Tavily", "icon": "🔎", "description": "Web search results"},
     ]
