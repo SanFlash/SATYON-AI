@@ -37,11 +37,11 @@ CATEGORY_KEYWORDS = {
 
 # Source mapping per category
 CATEGORY_SOURCES = {
-    "dataset": ["kaggle", "github", "google", "wikipedia"],
-    "code": ["stackoverflow", "github", "google", "youtube"],
-    "research": ["arxiv", "google", "wikipedia", "github"],
-    "tutorial": ["youtube", "google", "stackoverflow", "wikipedia"],
-    "general": ["google", "wikipedia", "stackoverflow", "github", "arxiv", "youtube", "kaggle"],
+    "dataset": ["kaggle", "github", "google", "wikipedia", "tavily"],
+    "code": ["stackoverflow", "github", "google", "youtube", "tavily"],
+    "research": ["arxiv", "google", "wikipedia", "github", "tavily"],
+    "tutorial": ["youtube", "google", "stackoverflow", "wikipedia", "tavily"],
+    "general": ["google", "wikipedia", "stackoverflow", "github", "arxiv", "youtube", "kaggle", "tavily"],
 }
 
 

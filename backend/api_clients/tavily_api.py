@@ -54,22 +54,22 @@ def _get_demo_results(query: str) -> list:
     return [
         {
             "title": f"Tavily: {query} - Overview & Guide",
-            "url": f"https://www.google.com/search?q={query.replace(' ', '+')}",
-            "snippet": f"Comprehensive overview of {query}. Find detailed information, tutorials, and resources related to your search.",
+            "url": f"https://tavily.com/search?q={query.replace(' ', '+')}",
+            "snippet": f"Comprehensive overview of {query}. Find detailed information, tutorials, and resources related to your search. (Demo result)",
             "source": "tavily",
             "source_icon": "🔎",
         },
         {
             "title": f"Understanding {query} - Complete Tutorial",
-            "url": f"https://www.google.com/search?q={query.replace(' ', '+')}+tutorial",
-            "snippet": f"Learn everything about {query} with step-by-step tutorials, examples, and best practices from industry experts.",
+            "url": f"https://tavily.com/search?q={query.replace(' ', '+')}+tutorial",
+            "snippet": f"Learn everything about {query} with step-by-step tutorials, examples, and best practices from industry experts. (Demo result)",
             "source": "tavily",
             "source_icon": "🔎",
         },
         {
             "title": f"{query} - Latest News & Updates",
-            "url": f"https://www.google.com/search?q={query.replace(' ', '+')}+news",
-            "snippet": f"Stay updated with the latest developments, news, and trends related to {query}.",
+            "url": f"https://tavily.com/search?q={query.replace(' ', '+')}+news",
+            "snippet": f"Stay updated with the latest developments, news, and trends related to {query}. (Demo result)",
             "source": "tavily",
             "source_icon": "🔎",
         },
